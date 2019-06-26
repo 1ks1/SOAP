@@ -57,14 +57,22 @@
 		<input type="text" name="firstname" placeholder="firstname"><br />
 		<input type="text" name="lastname" placeholder="lastname"><br />
 		<input type="text" name="email" placeholder="email"><br />
-		<input type="text" name="password" placeholder="password"><br />
-		<input type="text" name="confirmpassword" placeholder="confirm password"><br />
-		<button name="sendLogin" id="btn">SEND</button>
+		<input type="password" name="password" ><br />
+		<input type="password" name="confirmpassword"><br />
+		<button name="send" id="btn">SEND</button>
 		</form>
-    <div id="result_form"></div>
-
+</div>
+<!-- login -->
+<div class="form_user_login">
+    <span>login</span>
+		<form action="" id="login_form" method="PUT">
+		<input type="text" name="email" placeholder="email"><br />
+		<input type="password" name="password"><br />
+		<button name="sendLogin" id="btn_login">SEND</button>
+		</form>
 </div>
 
+<div id="result_form"></div>
 
 
     <div class="cars-list" id="cars"></div>
@@ -78,7 +86,6 @@
             <h3 class="js_car_model"></h3>
 			<h4 class="js_car_year"></h4>
 			<span class="js_car_price price"></span>
-			
         </div>
 	
     </script>
@@ -99,7 +106,6 @@
                     $car.appendTo($cars);
                 });
             }
-
 
             $.ajax({
                 url: $url_serv+'ShowCars/',
@@ -123,7 +129,7 @@
 
         }(jQuery))
 
-		
+		/////REGISTRATION////
 			function sendAjaxForm(result_form, registration_form, url) {
 			$.ajax({
                 url:     url, //url страницы 
@@ -135,7 +141,13 @@
 					console.log(result.regstatus);
 					//result = response;
                     $('#result_form').html('Status registration '+result.regstatus);
-					if (result.regstatus == 'OK'){}
+					
+						if (result.regstatus == 'OK'){
+						document.cookie = "uid="+result.email;document.cookie = "key="+result.key;
+						}else{
+							document.cookie = "uid="+result.email;document.cookie = "key=0";
+						}
+					
                 },
                 error: function(response) { // Данные не отправлены
                     $('#result_form').html('Ошибка. Данные не отправлены.');
@@ -150,6 +162,41 @@
 						return false; 
 					}
             );
+			
+			
+			/////LOGIN USER////
+			function sendAjaxLogin(result_form, login_form, url) {
+			$.ajax({
+                url:     url, //url страницы 
+                type:     "POST", //метод отправки
+                dataType: "html", //формат данных
+                data: $("#"+login_form).serialize(),  // Сеарилизуем объект
+                success: function(response) { //Данные отправлены успешно
+                    result = $.parseJSON(response);
+					console.log(result);
+					//result = response;
+                    $('#result_form').html('Status login '+result.loginstatus);
+						if (result.loginstatus == 'OK'){
+							document.cookie = "uid="+result.email;document.cookie = "key="+result.key;
+						}else{
+							document.cookie = "uid="+result.email;document.cookie = "key=0";
+						}
+                },
+                error: function(response) { // Данные не отправлены
+                    $('#result_form').html('Ошибка. Данные не отправлены.');
+                }
+            });
+							
+			}
+			
+			$("#btn_login").click(
+					function(){
+						sendAjaxLogin('result_form', 'login_form', $url_serv+'Login/');
+						return false; 
+					}
+            );
+			
+			
        
     </script>
 </body>
